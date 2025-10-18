@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import cloudinary.uploader
 import os
+import openai
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 cloudinary.config(
     cloud_name="dsunoxvya",
@@ -9,12 +12,41 @@ cloudinary.config(
     api_secret=os.getenv("CLOUDINARY_API_SECRET")
 )
 
+
 app = Flask(__name__)
 CORS(app, origins=["https://projectstepagain.com"])  # Update this with your actual store domain
 
 app.config["MAX_CONTENT_LENGTH"] = 8 * 1024 * 1024  # 8 MB cap
 
 ALLOWED = {"image/jpeg", "image/png", "image/webp"}
+
+def assess_shoe_image(image_url):
+    response = openai.chat.completions.create(
+        model="gpt-4o",  # vision-capable
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": (
+                            "This is a photo of a donated shoe. "
+                            "Please describe its condition (clean, worn, damaged, etc.) "
+                            "and say if it’s suitable for donation."
+                        )
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": image_url
+                        }
+                    }
+                ]
+            }
+        ],
+        max_tokens=300
+    )
+    return response.choices[0].message.content
 
 @app.post("/proxy/donate-upload")
 def donate_upload():
@@ -30,12 +62,15 @@ def donate_upload():
     upload_result = cloudinary.uploader.upload(file)
 
     image_url = upload_result["secure_url"]
-
+    
     # At this point, we can send image_url to GPT
+    gpt_feedback = assess_shoe_image(image_url)
+    
     return jsonify({
-        "status": "uploaded",
+        "status": "analyzed",
         "email": email,
-        "image_url": image_url
+        "image_url": image_url,
+        "gpt_feedback": gpt_feedback
     }), 200
 
 if __name__ == "__main__":
