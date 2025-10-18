@@ -16,7 +16,8 @@ cloudinary.config(
     api_secret=os.getenv("CLOUDINARY_API_SECRET")
 )
 
-codes = file.open("codes.txt")
+with open("codes.txt", "r") as file:
+    codes = file.read().strip().split(",")
 
 
 app = Flask(__name__)
