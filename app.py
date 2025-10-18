@@ -46,11 +46,10 @@ def assess_shoe_image(image_url):
 
 @app.post("/proxy/donate-upload")
 def donate_upload():
-    email = request.form.get("email", "").strip()
     file = request.files.get("shoe_photo")
 
-    if not email or not file:
-        return jsonify({"status": "error", "message": "email and image required"}), 400
+    if not file:
+        return jsonify({"status": "error", "message": "image required"}), 400
     if file.mimetype not in ALLOWED:
         return jsonify({"status": "error", "message": "invalid file type"}), 400
 
@@ -79,7 +78,6 @@ def donate_upload():
 
     return jsonify({
         "status": "analyzed",
-        "email": email,
         "image_url": image_url,
         # "gpt_feedback": gpt_feedback,
         "discount_code": discount_code
