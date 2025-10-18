@@ -18,7 +18,6 @@ ALLOWED = {"image/jpeg", "image/png", "image/webp"}
 
 @app.post("/proxy/donate-upload")
 def donate_upload():
-    print("UPLOAD DETECTED")
     email = request.form.get("email", "").strip()
     file = request.files.get("shoe_photo")
 
@@ -27,17 +26,16 @@ def donate_upload():
     if file.mimetype not in ALLOWED:
         return jsonify({"status": "error", "message": "invalid file type"}), 400
 
-    image_bytes = file.read()
-    filename = file.filename
-    mime = file.mimetype
-    size = len(image_bytes)
+    # Upload to Cloudinary
+    upload_result = cloudinary.uploader.upload(file)
 
+    image_url = upload_result["secure_url"]
+
+    # At this point, we can send image_url to GPT
     return jsonify({
-        "status": "received",
+        "status": "uploaded",
         "email": email,
-        "filename": filename,
-        "mime": mime,
-        "bytes": size
+        "image_url": image_url
     }), 200
 
 if __name__ == "__main__":
