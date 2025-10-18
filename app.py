@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import cloudinary.uploader
+import os
 
 cloudinary.config(
     cloud_name="projectstepagain",
     api_key="979551848493753",
-    api_secret=""
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
 )
 
 app = Flask(__name__)
