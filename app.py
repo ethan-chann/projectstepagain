@@ -4,7 +4,7 @@ import cloudinary.uploader
 import os
 
 cloudinary.config(
-    cloud_name="projectstepagain",
+    cloud_name="dsunoxvya",
     api_key="979551848493753",
     api_secret=os.getenv("CLOUDINARY_API_SECRET")
 )
