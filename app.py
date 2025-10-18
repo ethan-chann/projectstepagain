@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["https://your-store.myshopify.com"])  # Update this with your actual store domain
+CORS(app, origins=["https://projectstepagain.com"])  # Update this with your actual store domain
 
 app.config["MAX_CONTENT_LENGTH"] = 8 * 1024 * 1024  # 8 MB cap
 
