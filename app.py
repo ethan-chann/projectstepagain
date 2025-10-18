@@ -4,7 +4,10 @@ import cloudinary.uploader
 import os
 import openai
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url="https://api.groq.com/openai/v1",
+)
 
 cloudinary.config(
     cloud_name="dsunoxvya",
@@ -21,32 +24,21 @@ app.config["MAX_CONTENT_LENGTH"] = 8 * 1024 * 1024  # 8 MB cap
 ALLOWED = {"image/jpeg", "image/png", "image/webp"}
 
 def assess_shoe_image(image_url):
-    response = openai.chat.completions.create(
-        model="gpt-4o",  # vision-capable
+    response = client.chat.completions.create(
+        model="gpt-image-1",  # assuming Groq supports this vision model
         messages=[
             {
                 "role": "user",
                 "content": [
-                    {
-                        "type": "text",
-                        "text": (
-                            "This is a photo of a donated shoe. "
-                            "Please describe its condition (clean, worn, damaged, etc.) "
-                            "and say if it’s suitable for donation."
-                        )
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": image_url
-                        }
-                    }
-                ]
+                    {"type": "text", "text": "Is the image below a shoe? Please answer yes or no."},
+                    {"type": "image_url", "image_url": {"url": image_url}},
+                ],
             }
         ],
-        max_tokens=300
+        max_tokens=10,
     )
-    return response.choices[0].message.content
+    return (response.choices[0].message.content)
+    
 
 @app.post("/proxy/donate-upload")
 def donate_upload():
