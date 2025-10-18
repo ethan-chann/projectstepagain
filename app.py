@@ -16,6 +16,8 @@ cloudinary.config(
     api_secret=os.getenv("CLOUDINARY_API_SECRET")
 )
 
+codes = file.open("codes.txt")
+
 
 app = Flask(__name__)
 CORS(app, origins=["https://projectstepagain.com"])  # Update this with your actual store domain
