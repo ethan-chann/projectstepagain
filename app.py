@@ -57,13 +57,13 @@ def donate_upload():
     image_url = upload_result["secure_url"]
     
     # At this point, we can send image_url to GPT
-    gpt_feedback = assess_shoe_image(image_url)
+    # gpt_feedback = assess_shoe_image(image_url)
     
     return jsonify({
         "status": "analyzed",
         "email": email,
         "image_url": image_url,
-        "gpt_feedback": gpt_feedback
+        # "gpt_feedback": gpt_feedback
     }), 200
 
 if __name__ == "__main__":
