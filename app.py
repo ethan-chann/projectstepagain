@@ -1,5 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import cloudinary.uploader
+
+cloudinary.config(
+    cloud_name="projectstepagain",
+    api_key="979551848493753",
+    api_secret=""
+)
 
 app = Flask(__name__)
 CORS(app, origins=["https://projectstepagain.com"])  # Update this with your actual store domain
